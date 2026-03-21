@@ -821,19 +821,19 @@ Bu bolumde daha sonra eklenecekler:
 
 
 
-#### 5.5.1 Gecis yaklasimi
+#### 5.5.1 Giris sigaçlari
 
 
 
-Taslakta cikis ve giris kapasiteleri bilerek farkli felsefelerle ele alinmis:
+ODT'den aktarilan metin (`7. giriş sıgaçları`):
 
-- cikista bulk kapasitörden kacinmak, kontrol tasarimini sade tutmak icin tercih edilmis
-
-- giriste ise kontrol dongusu dogrudan etkilenmedigi icin bulk kapasitör kullanimi daha acik degerlendirilmis
+> Çıkış kapasitörlerinde, mevcut MLCC'lere ek olarak bulk kapasitör kullanmaktan kaçındım; çünkü bulk kapasitörler çıkış empedansını değiştirerek kontrolcü tasarımını doğrudan etkiler ve kompanzasyonun yeniden ele alınmasını gerektirebilir. Ancak yaptığım hesaplamalarda mevcut MLCC’lerin, tanımlı gerilim ripple ve transient kriterlerini karşılaması yeterli olduğundan, ilave bulk kapasiteye ihtiyaç duyulmadı. Öte yandan, giriş kapasitörleri kontrolcü tasarımını doğrudan etkilemediği için (giriş empedansı, kontrol döngüsünden bağımsızdır), EMI ve termal sınırlar gözetilerek bulk kapasitör kullanımına yer verdim. Bu sayede orijinal spesifikasyonlarda yer almayan zorlu koşullara (örneğin ani giriş transiyentleri) karşı sistem dayanımı artırıldı.***
 
 
 
-Bu ayrim dogru bir muhendislik refleksi gosteriyor. Giris tarafinda karar yalnizca ripple ile degil, ayni zamanda EMI, RMS akim dayanimı ve giris transient dayanimi ile de ilgilidir.
+Ek not:
+
+Bu parca, cikis ve giris kapasiteleri arasindaki tasarim felsefesi farkini netlestiriyor. Cikista bulk kapasitör karari kontrol ve kompanzasyon tarafini etkilerken, giriste bulk kapasitör kullanimi daha cok `EMI`, termal dayanım ve transient dayanimi acisindan degerlendiriliyor.
 
 
 
@@ -841,15 +841,19 @@ Bu ayrim dogru bir muhendislik refleksi gosteriyor. Giris tarafinda karar yalniz
 
 
 
-Taslakta bu iterasyonda eklenen yeni gereksinimler acikca yazilmis:
+ODT'den aktarilan metin (`Eklenen yeni teknik şartlar`):
 
-- `DeltaVIN_PP <= 0.24 V`
-
-- `DeltaVIN_Tran <= 0.36 V`
-
+> Allowed input peak-to-peak ripple voltage: ΔVIN_PP ≤ 0.24V
+> Allowed input transient undershoot or overshoot: ΔVIN_Tran ≤ 0.36V
 
 
-Bu iki gereksinim, giris kapasitelerini onceki tasarima gore daha kritik hale getirmektedir.
+
+Ek not:
+
+Bu iki teknik sart, giris kapasiteleri icin artik yalnizca ortalama enerji depolama degil, ayni zamanda anlik gerilim kalite sinirlari da tanimlandigini gosteriyor. GitHub'da daha duzgun gorunmesi icin bu sinirlar su sekilde de okunabilir:
+
+- ΔV<sub>IN,PP</sub> ≤ 0.24 V
+- ΔV<sub>IN,Tran</sub> ≤ 0.36 V
 
 
 
@@ -857,35 +861,51 @@ Bu iki gereksinim, giris kapasitelerini onceki tasarima gore daha kritik hale ge
 
 
 
-Taslak notlarin ozeti su stratejiye isaret ediyor:
+ODT'den aktarilan metin:
 
-- yuksek frekansli ripple bastirma icin MLCC kullan
-
-- etkin kapasitans dususu nedeniyle dc-bias etkisini mutlaka hesaba kat
-
-- RMS akim dayanimini yalnizca kapasitansla karistirma; termal dayanimi da kontrol et
-
-- enerji depolama ve transient dayanimi icin bulk elektrolitik / polimer kapasitörleri degerlendir
-
-- EMI ve yerlesim acisindan giris kapasitörlerini high-side drain ile low-side source arasindaki sicak donguye cok yakin yerlestir
+> Yüksek frekans ripple’ını bastırmak için MLCC kullanacağım, ancak yüksek dc bias gerilimi altında capacitance’ları düşüyor.
+> Elektrolitik kapasitörler, düşük maliyetli ve büyük enerji depolama kapasitesine sahiptir ama yüksek ESR nedeniyle ripple bastırmakta zayıftır.
+> Bu yüzden, MLCC+Elektrolitik capacitor’u beraber kullanacağım…****
 
 
 
-#### 5.5.4 Minimum etkin `Cin` dusuncesi
+Ek not:
+
+Bu strateji, farkli kapasitör teknolojilerinin guclu oldugu frekans araliklarini birlikte kullanma mantigina dayanir:
+
+- MLCC tarafı: yuksek frekans ripple ve dusuk `ESR/ESL`
+- elektrolitik tarafı: daha buyuk enerji tamponu ve daha dusuk maliyetli bulk kapasite
+
+Ancak MLCC seciminde `dc-bias` altindaki etkin kapasitans dususu mutlaka hesaba katilmalidir; katalog degeri tek basina yeterli degildir.
 
 
 
-ODT taslaginda `MLCC Cin Hesabi` altinda hedef, `DeltaVIN_PP <= 0.24 V` sinirini saglayacak minimum etkin kapasitansi bulmaktir. Burada dikkat edilmesi gereken mantik dogru sekilde not edilmis:
-
-- once gerekli olan etkin `Cin` bulunur
-
-- sonra bu deger dc-bias, tolerans ve gerilim sinifi altinda gercek component degerine cevrilir
-
-- yani katalog `uF` degeri dogrudan kullanilmaz
+#### 5.5.4 MLCC `Cin` hesabi
 
 
 
-Taslakta bir ara yaklasim olarak en kotu durumun `D ~= 0.5` civarinda alinmasi fikri geciyor. Bu kullanisli bir ilk muhendislik yaklasimi olabilir; ancak nihai yazimda bunun gercek `Vin/Vout` araligi icin tekrar kontrol edilmesi gerekir.
+ODT'den aktarilan metin (`7.1. MLCC Sığaç Hesabı / 7.1.1. MLCC Cin Hesabı?`):
+
+> PKfsfsfsd
+> Girişteki ripple gerilimini ΔVIN_PP ≤ 0.24V ‘un altında tutabilecek, capacitor capacitance’nin en düşük değerini buluyoruz. [2] [3]
+> En yüksek a [3] ve [2] kaynaklarındaki örneklerde … D’nin … en kötü durum D = 0.5 iken ..
+> Bu değer etkin capacitance değeridir.
+> Dc Bias’a bak.
+> Voltage rating’e bak.
+> Tolerance’ı dikkate al yüzde kaçsa düş. Acaba kemet nasıl hesaplıyor?
+>
+> Voltage rating’e de dikkat. Emv’de 100V’luk voltage rating’i olan capacitor’ler kullanılmış. Geniş bir giriş gerilim aralığında çalışacak(5.5-100V?) şekilde tasarlandığı için olmalı…?
+
+
+
+Ek not:
+
+Bu alt bolumde korunacak esas mantik su:
+
+- once gerekli minimum etkin `Cin` bulunur
+- sonra `dc-bias`, tolerans ve gerilim sinifi etkileri eklenerek gercek secilecek parca degerine gidilir
+
+ODT notunda gecen `D = 0.5` varsayimi, ilk muhendislik yaklasimi olarak makul bir worst-case kontrol noktasi olabilir; ancak nihai hesapta gercek `V_in / V_out` araligina gore tekrar kontrol edilmelidir. Bu nedenle burada asil hedef katalog uF degerini degil, etkin `Cin` gereksinimini bulmaktir.
 
 
 
@@ -895,33 +915,99 @@ Taslakta bir ara yaklasim olarak en kotu durumun `D ~= 0.5` civarinda alinmasi f
 
 ODT tarafinda dogru olarak vurgulanan ikinci konu, MLCC'lerin yalnizca kapasitans acisindan degil, RMS akim ve sicaklik artisi acisindan da boyutlandirilmasidir.
 
+ODT'den aktarilan metin (`7.1.2. MLCC Sığaçlarının RMS Akımı?`):
 
+> Girişteki ripple gerilimini karşılamanın yanı sıra?** seramik sığaçlar, ısıl dayanımı da olmalıdır.?** Azami giriş akımının rms’sini hesaplayacağız.
+> Tam yükte..
+> Full load: Sistemin maksimum çıkış gücüyle (örneğin 125 W) çalıştığı durumu ifade eder. Bu durumda: Çıkış akımı (Iₒ) en yüksek seviyededir (senin örneğinde 9A Dolayısıyla girişten çekilen toplam akım da en yüksek olur. Ripple akımı DC akım üzerine binen AC bileşen olduğundan, DC arttıkça RMS ripple bileşeni de artar.***
 
-Taslakta bulunan ilk kaba notlar:
-
-- full-load durumda `Iload ~= 9 A`
-
-- ilk yaklasim olarak `Iin_rms ~= 0.5 x Iload`
-
-- buna gore `Iin_rms ~= 4.5 Arms`
-
-
-
-Bu sonuc simdilik kaba boyutlandirma notu olarak tutulabilir. ODT'de ayrica EVM uzerindeki sicaklik gozlemlerinden yararlanarak kart sicakligi ve komponent termal yukleri hakkinda ilk cikarimlar yapildigi goruluyor. Bu cikarimlar yararli olabilir; fakat final secim sadece EVM benzetimine degil, secilen komponent datasheet'lerine ve gercek RMS dagilimina dayanmalidir.
-
-
-
-ODT gorselleri:
+Kaba Hesap:
 
 ![MLCC RMS akimi kaba hesap](images/odt_embedded/fig_06_input_mlcc_rms_kaba_hesap.jpg)
+
+> Mavi eğri IIn_rms /Iload oranını verir.
+> D =0.5 iken: IIn_rms /Iload =yaklaşık 0.5’tır mavi eğri, dikey eksen seviyesi.
+> IIn_rms = Iload*0.5
+> IIn_rms = 9A*0.5
+> IIn_rms = 4.5A rms
+>
+> {I} rsub {i {n} rsub {R} M {S} rsub {m} ax} "=" {I} rsub {LOAD,max} "*" sqrt {left none D left (1"-"D right ) "+" {1} over {" " 12} {left none left (" " {{V} rsub {OUT}} over {" " {L"*"f} rsub {sw} "*" {I} rsub {max}} right none right )} ^ {2} ⋅ {left (1"-"D right )} ^ {2} ⋅D right none}
+> {I} rsub {i {n} rsub {R} M {S} rsub {m} ax} "="9A"*" sqrt {left none 0.5 left (1"-"0.5 right ) "+" {1} over {" " 12} {left none left (" " {14V} over {" "6.8μH"*" 332kHz"*"9A} right none right )} ^ {2} ⋅ {left (1"-"0.5 right )} ^ {2} ⋅0.5 right none}
+> {I} rsub {i {n} rsub {R} M {S} rsub {m} ax} "="4.55" " {A} rsub {RMS}
+
+
+
+Ek not:
+
+Bu alt bolumde ana teknik fikir, MLCC seciminin yalnizca kapasitansla degil RMS akim ve termal dayanım ile birlikte yapilmasi gerektigidir. ODT notundaki kaba `D = 0.5` yaklasimi ilk kontrol icin uygundur ve mavi egri uzerinden `I_in,rms ≈ 0.5 I_load` sonucu okunarak `4.5 A_rms` mertebesi bulunabilir.
+
+GitHub uyumlu matematik bicimiyle verilen daha ayrintili ifade su sekilde yazilabilir:
+
+$$
+I_{in,RMS,\max}
+= I_{LOAD,\max}
+\sqrt{
+D(1-D)
+ + \frac{1}{12}
+ + \left(\frac{V_{OUT}}{L\,f_{sw}\,I_{\max}}\right)^2
+ + (1-D)^2 D
+}
+$$
+
+ODT notasyonundaki sayisal yerlestirme korunursa:
+
+$$
+I_{in,RMS,\max}
+= 9\,\text{A}\,
+\sqrt{
+0.5(1-0.5)
+ + \frac{1}{12}
+ + \left(\frac{14\,\text{V}}{6.8\,\mu\text{H}\cdot 332\,\text{kHz}\cdot 9\,\text{A}}\right)^2
+ + (1-0.5)^2\cdot 0.5
+}
+\approx 4.55\,\text{A}_{RMS}
+$$
+
+Bu sonuc, giris MLCC bankasinin yalnizca ripple gerilimini degil, RMS akim tasima ve sicaklik artisi tarafini da karsilamasi gerektigini gosterir.
+
+ODT'den aktarilan metin (`7.1.3. MLCC Sığaçlarının Sıcaklıkla RMS Akımıı?`):
+
+> YARR. ELEMAN SEÇMEYE ÇALIŞMA ÇALIŞMAAAA.AA
+> 4.55 Arms akımı
+> X7R, X5R’den daha iyi sıcaklığa daha dayanıklı.
 
 ![MLCC sicaklik / X7R-X5R civari](images/odt_embedded/fig_07_input_mlcc_temp_x7r_x5r.png)
 
 ![MLCC sicaklik civari - 1](images/odt_embedded/fig_08_input_mlcc_temp_grafik_01.png)
 
+> Giriş kapasitorlerinin pozitif ucu, High-side mosfet’ın Drain ucuna, mmümkün (Kondansatörün negatif ucu, low-side MOSFET’in source ucuna, pozitif ucu ise high-side MOSFET’in drain ucuna mümkün olduğunca yakın yerleştirilmelidir.
+> di/dt’yi düşürmek için. ****
+
 ![MLCC sicaklik civari - 2](images/odt_embedded/fig_09_input_mlcc_temp_grafik_02.png)
 
+> 48V, 8A’de Main Mosfet’teki Marker1: 73.9 derece ölçülmüş. 24V, 8A’de Main Mosfet’teki Marker1: 64.8 derece ölçülmüş.
+> Bizim sistemde Vinmax = 36V, Marker1 bölgesinden biraz dahasoğukbölgeolduüğundan en fazla 70derecedir çıkarımını yaptım.
+
 ![MLCC sicaklik civari - 3](images/odt_embedded/fig_10_input_mlcc_temp_grafik_03.png)
+
+> Çıkış sıcağının bulunduğu yerdeki Kart sıcaklığı 70derece olarak tahmin ettik** Iin_rms_max = 4.55Arms bulmuştuk.
+>
+> Üzerinden geçen bu akımla ne kadar sıcaklık artışı oluyor. Bu dikeydeki temp.rise derecesi kartın derecesine eklenir. Diyelim ki Hiç akım yokken kartın sıcaklığı ne ise ona değen kapaciyorun de sıcaklığı o olur. Termodinamik birbirine değen…
+> Kapasitor, Sıcaklık artışının ne kadara kabul ediyor. Buna bak.
+>
+> Paralel capacitor kullanarak Iin_rms_max = 4.55Arms’yi böleriz. TEMP.rise da az olur.
+
+
+
+Ek not:
+
+Bu parca, MLCC seciminde yalnizca elektriksel degerlerin degil sicaklik dayanimının da hesaba katilmasi gerektigini vurguluyor. ODT notundaki ana fikirler sunlardir:
+
+- `X7R`, `X5R`'ye gore sicaklik davranisi acisindan daha guvenli bir tercihtir
+- giris MLCC'leri high-side drain ile low-side source arasindaki sicak donguye olabildigince yakin yerlestirilmelidir
+- `I_in,RMS,max = 4.55 A_rms` akimi birden fazla paralel kapasitöre paylastirmak, her bir kapasitördeki `temp rise` degerini azaltir
+
+`48 V / 8 A` ve `24 V / 8 A` EVM gozlemlerinden yapilan `~70 degC` kart sicakligi tahmini, yalnizca ilk muhendislik referansi olarak tutulmalidir; nihai secimde secilen MLCC datasheet'indeki izin verilen sicaklik artisi ve ortam / kart sicakligi birlikte kontrol edilmelidir.
 
 
 
