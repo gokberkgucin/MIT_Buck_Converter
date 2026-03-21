@@ -390,19 +390,57 @@ Ideal duty degerleri zaman alanina cevrilirse:
 
 
 
-#### 5.2.3 Minimum on/off sureleri ile ilk karsilastirma
+#### 5.2.3 `D_{max}` donanimsal sinirlari ve minimum on/off sureleri
 
 
 
-`yeni.odt` taslaginda LM5146-Q1 icin su donanimsal sinirlar not edilmis:
+ODT'den aktarilan metin (`6.1.4. Dmax,donanımsal..?`):
 
-- `tON(min) = 40 ns` high `VIN / VOUT` orani icin
+> LM5146-Q1’nun
+> - 40-ns tON(min) for high VIN / VOUT ratio
+> - 140-ns tOFF(min) for low dropout
+> Main mosfet’ın iletimde olma süresi 40ns’den daha kısa olmaz.
+> … Dikkat burası tam doğru olmayabilir. *** Bakarsın bir video vardı. Eklersin.
+> Arada başka zamanlar da var. Ölü zaman gibi…
+>
+> {D} rsub {MAX,donanımsal} ≈ {{T} rsub {sw} "-"" " {t} rsub {off left (min right )}} over {{T} rsub {sw}} " "
+> ≈" " {{{1} over {f}} rsub {sw} "-"" " {t} rsub {off left (min right )}} over {{{1} over {f}} rsub {sw}} " "≈" " {{1} over {332kHz} "-"" " 140nsaniye} over {{1} over {332kHz}}
+> ≈" " {{{1} over {f}} rsub {sw} "-"" " {t} rsub {off left (min right )}} over {{{1} over {f}} rsub {sw}} " "≈" " {{1} over {332kHz} "-"" " 140nsaniye} over {{1} over {332kHz}}
 
-- `tOFF(min) = 140 ns` low-dropout kosullari icin
 
 
+Ek not:
 
-Yukaridaki ilk ideal hesaplarla karsilastirildiginda gereken `tON` ve `tOFF` sureleri mikro saniye mertebesindedir ve minimum zaman sinirlarinin oldukca uzerindedir. Bu nedenle ilk bakista, nominal `24 V - 36 V` calisma araliginda `tON(min)` ve `tOFF(min)` sinirlari tasarimi zorlayan ana kisit gibi gorunmemektedir.
+Bu parca, denetleyicinin ideal duty hesabindan ayri olarak donanimsal zaman sinirlarini hatirlatiyor. ODT notunda da isaret edildigi gibi bu hesap, olu zaman ve diger ayrintilar ihmal edilirse yalnizca ilk yaklasim olarak kullanilmalidir.
+
+GitHub uyumlu matematik bicimiyle donanimsal ust duty siniri su sekilde yazilabilir:
+
+$$
+D_{\max,\text{donanimsal}} \approx \frac{T_{sw} - t_{OFF(\min)}}{T_{sw}}
+$$
+
+$$
+D_{\max,\text{donanimsal}} \approx \frac{\frac{1}{f_{sw}} - t_{OFF(\min)}}{\frac{1}{f_{sw}}}
+$$
+
+`f_{sw} = 332\,\text{kHz}` ve `t_{OFF(\min)} = 140\,\text{ns}` icin:
+
+$$
+D_{\max,\text{donanimsal}} \approx
+\frac{\frac{1}{332\,\text{kHz}} - 140\,\text{ns}}{\frac{1}{332\,\text{kHz}}}
+\approx 0.953
+$$
+
+Ayni yaklasimla en kucuk on-time sinirindan bir alt duty tahmini de elde edilebilir:
+
+$$
+D_{\min,\text{donanimsal}} \approx \frac{t_{ON(\min)}}{T_{sw}}
+= t_{ON(\min)} f_{sw}
+\approx 40\,\text{ns} \times 332\,\text{kHz}
+\approx 0.013
+$$
+
+Bu nedenle nominal `24\,\text{V} - 36\,\text{V}` calisma araliginda gereken duty degerleri ilk bakista bu donanimsal sinirlarin icinde gorunmektedir; ancak olu zaman, propagation delay ve kontrolcuya ozgu diger zamanlar nihai yorumdan once ayrica dogrulanmalidir.
 
 
 
@@ -446,35 +484,19 @@ Bu nedenle acik kontrol maddesi olarak su soru korunacaktir:
 
 
 
-#### 5.3.1 Bobinin tasarimdaki rolu
+#### 5.3.1 Cikis bobini
 
 
 
-Taslak notlara gore cikis bobini, bu tasarimda hem ripple seviyesini hem de load transient sirasindaki akim yukselme hizini belirleyen ana elemanlardan biridir.
+ODT'den aktarilan metin (`5. çıkış bobini`):
+
+> BOŞ EKLENECEK
 
 
 
-Bobin degeri buyudukce:
+Ek not:
 
-- tepeden tepeye bobin akimi dalgalanmasi azalir
-
-- `Vout` ripple'ini kontrol etmek kolaylasir
-
-- cikis kapasitelerinin yuksek frekanstaki yukunu bir miktar azaltmak mumkun olur
-
-
-
-Ancak bobin degeri gerektiginden fazla buyutulurse:
-
-- akim degisim hizi yavaslar
-
-- load transient cevabi kotulesebilir
-
-- fiziksel boyut ve maliyet artar
-
-
-
-Bu nedenle taslakta bobin secimi, yalnizca ripple azaltma problemi olarak degil, ayni zamanda transient performans ile yapilan bir denge secimi olarak gorulmektedir.
+Bu alt bolum su anda placeholder olarak tutuluyor. Sonraki parcada bobin degeri, ripple gerekcesi, slew-rate iliskisi ve gerekiyorsa denklemler GitHub uyumlu matematik biciminde eklenebilir.
 
 
 
@@ -542,19 +564,23 @@ Bu bolum tamamlanirken su maddeler netlestirilecek:
 
 
 
-#### 5.4.1 Cikis kapasitelerinin temel gorevi
+#### 5.4.1 Cikis sigaçlari
 
 
 
-`yeni.odt` taslagina gore cikis kapasiteleri iki ana gorev ustlenir:
+ODT'den aktarilan metin (`6. çıkış sığaçları`):
 
-- yuk gecislerinde enerji saglamak
+> Çıkış sığaçlarının iki temel işlevi vardır.
+> • Enerji depolamak: Yük geçişlerinde (load transients), ani akım taleplerine anında cevap verebilmek için, Yeteri kadar hızlı cevap veremezse artar.
+> • Çıkış Impedance’sını düşürmek: Böylece hem hem de gerilimlerini düşürür.
+>
+> 6.1. Yük altındaki Çıkış Gerilimi Değişimleri ve Çözüm Yolları
 
-- cikis empedansini dusurerek gerilim sapmalarini sinirlamak
 
 
+Ek not:
 
-Bu iki gorev, cikis ripple'inin ve load transient sirasindaki overshoot / undershoot davranisinin birlikte dusunulmesini gerektirir.
+Bu parca, cikis kapasitelerinin iki ana rolunu ayiriyor: transient sirasinda kisa sureli enerji tamponu olmak ve frekansa bagli cikis empedansini dusurmek. ODT kopyasinda bazi semboller eksik gorunse de teknik olarak korunmak istenen ana fikir nettir: kapasitör bankasi hem `load transient` sirasindaki gerilim sapmasini hem de ripple davranisini birlikte etkiler.
 
 
 
@@ -580,18 +606,43 @@ Bu karar, `bulk kesinlikle kullanilmaz` anlamina gelmiyor. Su anki anlami daha d
 
 
 
-#### 5.4.3 Acik-cevrim cikis impedance
+#### 5.4.3 Overshoot / Undershoot gerilimi ve acik-cevrim cikis impedance
 
 
-ODT'den aktarilan metin (`BÖLÜM 3 / 3. Açık-çevrim çıkış ımpedance`):
+ODT'den aktarilan metin (`6.1.1. Overshoot/Undershoot Gerilimi`):
 
-> EKLENECEK YAZILACAK yazılar var. TAMAMLANMADI
+> Çıkış yük akımında büyüklüğünde bir değişim olduğunda*? Çıkış geriliminin değişim miktarı kadar.
+> : Açık Çevrim Çıkış Impedance’nin crossover frequency’ındaki büyüklüğü.
+>
+> ( Hata: Başvuru kaynağı bulunamadı.4 )
+>
+> miktarını düşürmek için, crossover frequency’ındaki açık-çevrim çıkış impedance’sını düşürmemiz şarttır.
+> Bunu iki yolla yapabiliriz:
+> a. Zou Şekil Hata: Başvuru kaynağı bulunamadı.1’e bakarsak, C’nin artmasıyla,vssss Zout’un düşürerek.***
+> b. Fc frekansını arttırarak, (tasarım felsefemiz gereği süreç ilerlerken değiştirmeyeceğiz**)
 
 
 
 Ek not:
 
-Bu alt bolum su anda placeholder olarak tutuluyor. Sonraki parcada bu basligin altina acik-cevrim / kapali-cevrim cikis empedansi ayrimini ve gerekiyorsa denklemleri GitHub uyumlu matematik bicimiyle ekleyebiliriz.
+ODT kopyasinda formül sembollerinin bir kismi eksik gelmis gorunuyor; bu nedenle kaynak metni oldugu gibi korudum. Teknik anlam olarak burada anlatilan iliski buyuk olasilikla asagidaki sezgiye karsilik geliyor:
+
+$$
+\Delta V_{out} \approx \Delta I_{load}\,\bigl|Z_{out}(f_c)\bigr|
+$$
+
+Burada:
+
+- $\Delta I_{load}$, yuk akimindaki ani degisim
+- $\Delta V_{out}$, cikis gerilimindeki overshoot veya undershoot buyuklugu
+- $\lvert Z_{out}(f_c)\rvert$, crossover frekansi civarinda gorulen cikis empedansi buyuklugu
+
+Bu nedenle bu alt bolumde korunacak iki temel tasarim fikri sunlardir:
+
+- etkin cikis kapasitansini artirarak `Zout`'u dusurmek
+- `f_c` degerini arttirarak dongunun yuk degisimine daha hizli cevap vermesini saglamak
+
+Ancak mevcut tasarim felsefesinde `f_c` sonradan rastgele oynanacak bir parametre gibi ele alinmadigi icin, pratik agirlik daha cok kapasitör aginin sekillendirilmesine kaymaktadir.
 
 
 
@@ -604,78 +655,90 @@ Bu alt bolum su anda placeholder olarak tutuluyor. Sonraki parcada bu basligin a
 #### 5.4.4 Vripple ve `fsw` civarindaki `Zout`
 
 
+ODT'den aktarilan metin (`6.1.2. Vripple Gerilimi`):
 
-Taslakta ripple dusuncesi iki kola ayriliyor:
-
-- bobin akimi tepeden tepeye dalgalanmasini azaltmak
-
-- anahtarlama frekansi civarinda cikis empedansini dusurmek
-
+> Çıkış gerilimini düşürmek için, bobin akımının tepeden tepeye değerini düşürmek gerekir. Bunu da L’yi arttırarak yapabiliriz. Çıkış bobinin inductance’ı artarsa tepeden tepeye bobin akımının dalgalanması azalır. Eğer inductance çok artarsa, dalgalanmayı düşürürüz fakat, maliyet artar, fiziksel boyut artar, transient response bozulabilir.
+>
+> gerilimini düşürmenin daha etkili bir yolu, fsw frekansındaki çıkış impedance’sını düşürmektir. Şekil Hata: Başvuru kaynağı bulunamadı.1’a bakarsak; Zout, Daha yüksek capacitance ve daha düşük bir esr direncinden oluşursa; Capacitance eğrisi sola kayar, yatayda düz bir eğri olan esr direnci de azaldığı için daha aşağıda olur. fsw frekansında Zout‘u etkin oldüşürdüğünü görebiliriz.****?
+> ( Hata: Başvuru kaynağı bulunamadı.5 )
 
 
-Birinci yol icin bobin enduktansini artirmak mumkundur; ancak bunun maliyet, hacim ve transient cevabi uzerinde bedeli vardir. Ikinci yol ise cikis aginin `fsw` civarindaki empedansini dusurmekten gecer. Bu da pratikte:
+
+Ek not:
+
+Bu parca, `Vripple` dusuncesini iki ayri tasarim koluna ayiriyor:
+
+- bobin akimi dalgalanmasini azaltmak icin `L` degerini buyutmek
+- anahtarlama frekansi civarinda `Zout`'u dusurmek
+
+GitHub uyumlu matematik bicimiyle ilk sezgi su sekilde yazilabilir:
+
+$$
+\Delta I_L \propto \frac{1}{L}
+$$
+
+Yani `L` arttikca bobin akiminin tepeden tepeye dalgalanmasi azalir. Ancak ODT'de dogru sezildigi gibi, bunun karsiliginda hacim, maliyet ve transient cevap hizi etkilenebilir.
+
+Ikinci yol ise `f_{sw}` civarindaki cikis empedansini dusurmektir. Bunun pratik anlami sunlardir:
 
 - daha yuksek etkin kapasitans
+- daha dusuk `ESR`
+- uygun yerlesim ile daha dusuk parasitikler
 
-- daha dusuk ESR
-
-- uygun yerlesim ve dusuk parasitikler
-
-ile ilgilidir.
-
-
-
-ODT'deki bu sezgi korunmalidir: kapasitör secimi yalnizca toplam `uF` toplama isi degil, frekansa bagli `Zout` sekillendirme isidir.
+Bu nedenle bu alt bolumde korunacak ana fikir sunudur: `Vripple` yalnizca bobin akim dalgalanmasi problemi degil, ayni zamanda `f_{sw}` civarindaki `Zout`'un sekillendirilmesi problemidir.
 
 
 
 #### 5.4.5 Bulk kapasitör eklemenin getirdigi sifirlar
 
 
+ODT'den aktarilan metin (`6.1.3. Kapasitörlerin Getirdiği Sıfırlar`):
 
-Taslakta ozellikle su nokta fark edilmis: MLCC'lere ek olarak bulk kapasitör eklendiginde cikis agi yeni kutup / sifir davranislari getirir ve bu durum kompanzator tasarimini etkileyebilir.
-
-
-
-Bu gozlem onemlidir cunku:
-
-- farkli kapasitör teknolojileri farkli ESR / ESL getirir
-
-- bu da cikis empedansi egirisini ve plant'in sekilini degistirir
-
-- dolayisiyla bulk ekleme karari yalnizca enerji depolama karari degil, ayni zamanda kontrol tasarimi kararidir
+> İki farklı kapasitör kullanırsak, MLCC’lere ek olarak bulk capacitor de kullanırsak, bulk capacitorlerin getirdiği düşük frekansta sıfırlar olacak. Yüksek frekanstaki MLCC’lere ek olarak. bulk capacitor kullanmasak mı, ŞUANDA BELLİDEĞİL
+>
+> G71 kaynağı, yüksek akım ve ani yük değişimi olan uygulamalarda çıkış capacitorlerinin tasarlanmasına yöntemler gösteriyor. Geleneksel yöntemlerin yetersiz olduğunu vurguluyor.
+> Bizim tasarımımızda, G71’deki yöntemleri uygulamanın gerekli olup olmadığından emin değildim.
 
 
 
-Bu nedenle mevcut iterasyonda "simdilik cikis bulk kapasitör kullanmayalim" karari teknik olarak tutarlidir. Ancak bu karar final degil; load transient ve simülasyon sonuclarina gore tekrar acilabilir.
+Ek not:
+
+Bu parca, farkli kapasitör teknolojilerinin ayni cikis aginda kullanilmasinin yalnizca toplam kapasitansi degil, frekans cevabini da degistirdigini vurguluyor. Yani MLCC + bulk kombinasyonu, dusuk frekansta ek sifirlar ve yeni `ESR/ESL` etkileri getirerek `Zout` egrisinin seklini degistirebilir.
+
+Bu nedenle burada korunacak karar mantigi sunudur:
+
+- sadece daha fazla enerji depolamak icin bulk eklemek dogrudan dogruya dogru karar olmayabilir
+- bulk ekleme karari ayni zamanda kontrol ve kompanzasyon kararidir
+- G71 yonteminin gerekliligi, bu tasarimin yuk profili ve transient hedefleri ile birlikte yeniden degerlendirilmelidir
 
 
 
 #### 5.4.6 Slew-rate ve cikis kapasitörlerinin enerji tamponu rolu
 
 
+ODT'den aktarilan metin (G71 transient yorumu):
 
-Taslakta `Slew Rate Hesabi` altindaki ana mantik burada da korunmalidir:
+> G71’deki t1 anına kadar, inductor akımı yükü karşılayamadı, ancak t1 anından sonra karşılayabildi. delta_Vout un türevinin 0 (dVOUT/dt) olduğu yer aslında. Gerilim azalmasının durduğu ana karşılık geliyor bu t1 anı, aynı zamanda bu t1 anı, t_undershoot süresinin sonu anlamına da gelir.
 
-- regulator yuk aniden arttiginda bobin akimini anlik olarak yeterli seviyeye getiremez
+![G71 cikis transient yontemi civari](images/odt_embedded/fig_03_g71_transient_yontemi.png)
 
-- ilk anda gereken ekstra akim cikis kapasitörlerinden gelir
-
-- bobin akiminin gercek yukselme hizi ideal denkleme ek olarak `RDS(on)`, `DCR` ve yerlesim kayiplari nedeniyle daha da sinirlanir
-
-
-
-ODT'de `t1` benzeri bir an ile gerilim dususunun durdugu nokta ve `dVout/dt ~= 0` sezgisi not edilmis. Bu not tam matematiksel final ifade olarak degil, ama faydali fiziksel sezgi olarak korunabilir: bobin akimi yuk gereksinimine yetismeye basladiginda kapasitörlerin tek basina akim verme yuku azalmaya baslar.
+Ani bir yuk akimi degisimi sirasinda `Vout`'un minimum noktasi ve `t1` ani.
 
 
 
-Bu yorum, EVM'de yalnizca MLCC kullanilmasinin neden belirli kosullarda yeterli olabildigini anlamak icin de iyi bir ara basamaktir.
+Ek not:
+
+Bu yorum, transient sirasinda cikis kapasitörlerinin enerji tamponu gorevini fiziksel olarak acikliyor. Yuk aniden arttiginda bobin akimi hemen yetisemedigi icin ilk fark cikis kapasitörlerinden cekilir. `t1` ani, gerilim dususunun durdugu ve matematiksel olarak su kosulun saglandigi an olarak yorumlanabilir:
+
+$$
+\frac{dV_{out}}{dt} = 0
+$$
+
+Bu an ayni zamanda `t_{undershoot}` suresinin sonu olarak da dusunulebilir. Yani `t1` sonrasinda bobin akimi, yuk talebini karsilayacak seviyeye yaklasmis olur ve kapasitörlerin tek basina akim verme rolu azalmaya baslar.
 
 
 
 ODT gorselleri:
-
-![G71 cikis transient yontemi civari](images/odt_embedded/fig_03_g71_transient_yontemi.png)
 
 ![Slew-rate hesabi civari - 1](images/odt_embedded/fig_04_slew_rate_gecici_davranis.png)
 
