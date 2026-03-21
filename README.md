@@ -423,7 +423,7 @@ $$
 D_{\max,\text{donanimsal}} \approx \frac{\frac{1}{f_{sw}} - t_{OFF(\min)}}{\frac{1}{f_{sw}}}
 $$
 
-`f_{sw} = 332\,\text{kHz}` ve `t_{OFF(\min)} = 140\,\text{ns}` icin:
+$f_{sw} = 332\,\text{kHz}$ ve $t_{OFF(\min)} = 140\,\text{ns}$ icin:
 
 $$
 D_{\max,\text{donanimsal}} \approx
@@ -440,7 +440,7 @@ D_{\min,\text{donanimsal}} \approx \frac{t_{ON(\min)}}{T_{sw}}
 \approx 0.013
 $$
 
-Bu nedenle nominal `24\,\text{V} - 36\,\text{V}` calisma araliginda gereken duty degerleri ilk bakista bu donanimsal sinirlarin icinde gorunmektedir; ancak olu zaman, propagation delay ve kontrolcuya ozgu diger zamanlar nihai yorumdan once ayrica dogrulanmalidir.
+Bu nedenle nominal $24\,\text{V} - 36\,\text{V}$ giris gerilimi araliginda gereken duty degerleri, ilk yaklasimda bu donanimsal sinirlarin icinde gorunmektedir. Ancak olu zaman, propagation delay ve kontrolcuye ozgu diger zamanlar nihai yorumdan once ayrica dogrulanmalidir.
 
 
 
