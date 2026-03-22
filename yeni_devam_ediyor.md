@@ -996,7 +996,7 @@ Bu sonuc, giris MLCC bankasinin yalnizca ripple gerilimini degil, RMS akim tasim
 
 ODT'den aktarilan metin (`7.1.3. MLCC Sığaçlarının Sıcaklıkla RMS Akımıı?`):
 
-> YARR. ELEMAN SEÇMEYE ÇALIŞMA ÇALIŞMAAAA.AA
+> NOT: ELEMAN SEÇMEYE ÇALIŞMAAA
 > 4.55 Arms akımı
 > X7R, X5R’den daha iyi sıcaklığa daha dayanıklı.
 
