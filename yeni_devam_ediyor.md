@@ -722,6 +722,20 @@ Bu nedenle bu alt bolumde korunacak ana fikir sunudur: $V_{ripple}$ yalnizca bob
 
 
 
+Defterden aktarilan not (`W.28`):
+
+- bu sayfa, cikis ripple / cikis kapasitörü tarafinda alternatif bir ilk boyutlandirma denemesi gibi gorunuyor
+- `2 x 22 uF` ve `~2 mOhm ESR` benzeri bir cikis bankasi varsayimi kullaniliyor
+- yazilan iliski, klasik buck ripple yaklasimi ile minimum `Cout` tarafina bakiyor
+
+Tutarlilik kontrolu:
+
+- `W.28`, mevcut belgede kullanilan `70 uF` cikis bankasi ile birebir uyusmuyor
+- bu nedenle bu sayfa "yanlis hesap" gibi degil, daha cok eski / alternatif bir cikis kapasitörü iterasyonu olarak okunmali
+- cikis ripple icin kullanilan bu tip hesaplar korunmali; ancak nihai cikis capacitor bank'i ilan edilirken BOM ve daha sonraki sayfalarla tekrar eslestirilmelidir
+
+
+
 #### 5.4.5 Bulk kapasitör eklemenin getirdigi sifirlar
 
 
@@ -886,6 +900,33 @@ Bu iki teknik sart, giris kapasiteleri icin artik yalnizca ortalama enerji depol
 - $\Delta V_{IN,Tran} \le 0.36\,\text{V}$
 
 
+Defterden aktarilan not (`W.26`):
+
+Bu sayfa, ikinci projenin giris kapasitörü hesabinda kullanilan o anki tasarim ozet parametrelerini topluyor:
+
+- $V_{in,\min} = 24\,\text{V}$
+- $V_{in,\max} = 36\,\text{V}$
+- $V_{out} = 14\,\text{V}$
+- $P_{out,\max} = 125\,\text{W} \Rightarrow I_{out,\max} \approx 8.93\,\text{A} \approx 9\,\text{A}$
+- $P_{out,\min} = 50\,\text{W} \Rightarrow I_{out,\min} \approx 3.57\,\text{A}$
+- `load-step` yaklasik $9 - 3.57 = 5.43\,\text{A}$
+- giris tarafi icin yeni eklenen hedefler:
+  - `Allowed input current ripple (p-p, ideal source): 50 mA`
+  - $\Delta V_{IN,PP} \le 0.24\,\text{V}$
+  - $\Delta V_{IN,Tran} \le 0.36\,\text{V}$
+
+Bu sayfada ayrica giris kapasitörü hesabinda kullanilan goreli duty notlari da goruluyor:
+
+- $D_{\max} \approx 0.648$
+- $D_{\min} \approx 0.432$
+
+Tutarlilik kontrolu:
+
+- bu duty degerleri, yalnizca ideal $V_{out}/V_{in}$ oranindan gelmiyor; verim ve gercek tasarim kabulune dayali bir iterasyon olmasi muhtemel
+- bu nedenle input capacitor hesabinda kullanilan duty araligi olarak korunmali
+- ileride baska sayfalarda ayni duty degerlerinin kaynagi daha net gorulurse baglantisi kurulacak
+
+
 
 #### 5.5.3 Secilen genel strateji
 
@@ -936,6 +977,66 @@ Bu alt bolumde korunacak esas mantik su:
 - sonra `dc-bias`, tolerans ve gerilim sinifi etkileri eklenerek gercek secilecek parca degerine gidilir
 
 ODT notunda gecen $D = 0.5$ varsayimi, ilk muhendislik yaklasimi olarak makul bir worst-case kontrol noktasi olabilir; ancak nihai hesapta gercek $V_{in} / V_{out}$ araligina gore tekrar kontrol edilmelidir. Bu nedenle burada asil hedef katalog `uF` degerini degil, etkin $C_{in}$ gereksinimini bulmaktir.
+
+
+Defterden aktarilan not (`W.27`, `W.30`, `W.31`, `W.32`, `W.33`):
+
+Bu batch, giris kapasitörü boyutlandirmasinda birden fazla yontemin birlikte denendigini gosteriyor. Muhtemel kaynak baglamlari `G39`, `G44`, `G40` ve `G32` etrafinda toplanmis gorunuyor.
+
+`W.27` tarafinda, ripple gerilimi hedefinden minimum etkin `Cin` icin su iliski kullaniliyor:
+
+```math
+C_{in}
+\ge
+\frac{D(1-D)\,I_{out}}{\Delta V_{IN,PP}\,f_{sw}}
+```
+
+Defterdeki ilk yerlestirmede:
+
+- $D = 0.5$
+- $I_{out,\max} \approx 9\,\text{A}$
+- $\Delta V_{IN,PP} = 0.24\,\text{V}$
+- $f_{sw} = 332\,\text{kHz}$
+
+alininca yaklasik:
+
+```math
+C_{in,\text{eff}}
+\gtrsim
+\frac{0.5(1-0.5)\cdot 9}{0.24 \cdot 332\,\text{kHz}}
+\approx 28.4\,\mu\text{F}
+```
+
+`W.30-W.31` sayfalarinda ayni problem daha ayrintili okunuyor:
+
+- bir yandan `I_{Cin,RMS}` hesabi yapiliyor
+- diger yandan giris ripple gerilimi yalnizca kapasitif terim degil, `ESR` terimiyle birlikte dusunuluyor
+
+Bu yaklasimin temiz yazimi su sekilde ozetlenebilir:
+
+```math
+\Delta V_{IN}
+\approx
+\frac{I_{out}\,D(1-D)}{f_{sw}\,C_{in}}
+\, + \,
+I_{out}\,R_{ESR}
+```
+
+`W.32` sayfasi, daha sikı bir ornek olarak `\Delta V_{IN} = 50\,\text{mV}` gibi bir hedefle tekrar deneme yapiyor. Bu, mevcut ikinci proje spesifikasyonundaki `0.24 V` ile ayni sey degil; dolayisiyla final hedef olarak degil, daha sert bir tasarim egzersizi / ara deneme gibi korunmali.
+
+`W.33` ise `Allowed input current ripple = 50 mA` maddesini, kaynagin gordugu `Z_{in}` ile iliskilendirerek yorumlamaya calisiyor. Bu sayfa ozellikle su acidan degerli:
+
+- giris kapasitörü hesabinin sadece `uF` secimi olmadigini
+- kaynak tarafinin gordugu akim dalgalanmasi ile de bag kuruldugunu
+- dolayisiyla daha sonra eklenecek input filter veya damping agi ile ayni konuya baglanacagini
+
+Tutarlilik kontrolu:
+
+- `W.27` sonucundaki `28.4 uF`, ilk minimum etkin `Cin` adayi olarak yararlidir
+- `W.30-W.31` ayni problemi `ESR` terimini de icerecek sekilde daha gercekci okumaya calisiyor
+- `W.32` mevcut projedeki `0.24 V` hedefine gore daha sert bir ornek oldugu icin nihai sonuc gibi yazilmamali
+- `W.33` sayfasindaki `50 mA` current ripple yorumu, dogrudan capacitor seciminden cok kaynak tarafinin gordugu kalite metriği olarak ele alinmali
+- bu nedenle bu batch tek bir sonuc vermiyor; aksine ayni input-capacitor problemini farkli seviyelerde cozen bir hesap ailesi veriyor
 
 
 
@@ -1011,6 +1112,35 @@ I_{in,RMS,\max}
 ```
 
 Bu sonuc, giris MLCC bankasinin yalnizca ripple gerilimini degil, RMS akim tasima ve sicaklik artisi tarafini da karsilamasi gerektigini gosterir.
+
+
+Defterden aktarilan not (`W.29`):
+
+Bu sayfada, giris kapasitörü RMS akimi icin daha ayrintili bir sayisal deneme var. Defterde:
+
+- $D = 0.5$
+- $I_{out,\max} = 9\,\text{A}$
+- $\Delta I_L \approx 3.8\,\text{A}$
+
+kabul edilerek:
+
+```math
+I_{Cin,RMS}
+\approx
+\sqrt{
+D \left(
+I_{out}^2 (1-D)
+ + \frac{\Delta I_L^2}{12}
+\right)
+}
+\approx 4.94\,\text{A}
+```
+
+Tutarlilik kontrolu:
+
+- bu sonuc, yukaridaki `4.55 A_RMS` hesabiyla birebir ayni degil
+- farkin nedeni, kullanilan form, $\Delta I_L$ teriminin dahil edilmesi ve sayfadaki varsayimlar olabilir
+- su asamada bu iki hesap arasindan birini silmek yerine, `4.55 A_RMS` kaba ilk tahmin, `4.94 A_RMS` ise daha ayrintili / daha korunmaci tahmin olarak birlikte saklamak daha dogru
 
 ODT'den aktarilan metin (`7.1.3. MLCC Sığaçlarının Sıcaklıkla RMS Akımıı?`):
 
@@ -1131,6 +1261,23 @@ Ek not:
 Bu parca, bulk kapasitörlerin neden hala gerekli olabildigini netlestiriyor. MLCC'ler yuksek frekans ripple bastirmada cok guclu olsalar da, `dc-bias` ve sicaklik altinda etkin kapasitans kaybi yasadiklari icin daha yavas transient enerji ihtiyacinda tek baslarina yetersiz kalabilirler.
 
 Bu nedenle bulk kapasitörler burada yuksek frekansli sicak akim dongusunun ana parcasi gibi degil, enerji tamponu ve daha yavas dinamiklerin destekleyicisi olarak dusunulmelidir.
+
+
+Defterden aktarilan not (`W.29`):
+
+Bu sayfada bir ara aday olarak su giris bulk kapasitörü notu da goruluyor:
+
+- `68 uF`
+- `50 V`
+- `ESR ~ 20 mOhm`
+
+Bu deger, dogrudan nihai secim ilan edilmis gibi gorunmuyor; ancak MLCC bankasina paralel bulk enerji tamponu dusuncesinin defterde acikca denendigini gosteriyor.
+
+Tutarlilik kontrolu:
+
+- bu not, mevcut `MLCC + bulk` stratejisiyle uyumlu
+- fakat su asamada kesin nihai bulk parca gibi yazilmamali
+- BOM ve sonraki sayfalarla eslestiginde "nihai secilen bulk capacitor" ayrica yazilacak
 
 
 
@@ -1963,6 +2110,15 @@ Bu bolumde henuz nihai sayisal bode sonucu yoktur. Ancak yerel K-factor notlari 
 Buradaki sayilar su an "tasarim niyeti" seviyesindedir. Gercek `L`, `C`, `ESR`, `DCR`, modulator kazanci ve yuk araligiyla olusan plant uzerinden tekrar kontrol edilmeden final kabul edilmeyecektir.
 
 Defter taramasi `W.1-W.2`, `W.5`, `W.11` ve `W.12` icinde de `PM = 55 deg` hedefinin tekrarlandigi goruluyor. Yani bu hedef sadece eski ODT taslaginda gecen bir niyet degil; ilk 24 sayfalik defter batch'inde de aktif olarak kullanilmis bir tasarim hedefi.
+
+Defterden aktarilan not (`W.25`):
+
+Bu sayfa, faz marji ve kazanc marji tanimlarini genel kontrol diliyle tekrar ozetliyor:
+
+- birim kazanc frekansindaki faz acisindan `PM`
+- faz `-180 deg` oldugundaki buyuklukten `GM`
+
+Bu sayfa yeni sayisal sonuc vermekten cok, sonraki Bode yorumlarinda kullanilan dilin ve isaret mantiginin oturmus oldugunu gosteriyor.
 
 
 
