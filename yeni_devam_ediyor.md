@@ -1354,6 +1354,58 @@ Tutarlilik kontrolu:
 
 
 
+Defterden aktarilan not (`W.38`):
+
+Bu sayfa, bulk giris kapasitörü seciminde ikinci bir kriteri vurguluyor: secilen bulk kapasitör yalnizca yeterli `uF` saglamamali, ayni zamanda uzerinden gececek ripple akimini ve buna bagli isinmayi da tasiyabilmelidir.
+
+Sayfadaki ana fikirler sunlardir:
+
+- bulk kapasitör seciminde bir kosul, `I_{CB,RMS,\text{allowed}} > I_{CB,RMS}` olmali
+- MLCC bankasi yuksek frekansli ripple'in buyuk bolumunu tasirken, bulk kapasitör kalan ripple akimi ve enerji tamponu tarafinda rol alir
+- bulk kapasitör `ESR`'i buyudukce, ayni ripple kosulunda kayip ve isinma artar
+
+Defterde, bulk kapasitör uzerindeki ripple akimi icin yaklasik olarak su tip bir iliski yazilmaya calisiliyor:
+
+```math
+I_{CB,RMS}
+\approx
+\frac{\Delta V_{IN,PP}}{2\sqrt{3}\,ESR_B}
+```
+
+ve buna bagli olarak, izin verilen ripple gerilimi, bulk kapasitör `ESR`'i ve datasheet'teki izin verilen ripple akimi arasinda ikinci bir secim kosulu kuruluyor.
+
+Tutarlilik kontrolu:
+
+- bu sayfa, bulk capacitor secim mantigini "kapasitans yeterli mi?" sorusundan "eleman ripple akimini ve kaybini tasiyabilir mi?" sorusuna tasiyor
+- bu dogru muhendislik bakisidir
+- ancak sayfadaki son cebir ve son sayisal yerlestirme tam net degil
+- bu nedenle burada korunacak ana bilgi, kesin son formuldan cok secim mantiginin kendisidir
+- ileride secilen bulk capacitor datasheet'i ile birlikte bu kriter yeniden daha temiz kurulmalidir
+
+Defterden aktarilan not (`W.39`):
+
+Bu sayfa, bulk giris kapasitörü icin bu kez minimum kapasite tarafindan bir alt sinir hesaplamaya calisiyor. Yazimdan goruldugu kadariyla burada, bir `T_{rip}` veya benzeri rezerv / gecis suresi tanimlanip, load-step veya giris tarafindaki gecici durum boyunca bulk kapasitörun ne kadar enerji tamponu saglamasi gerektigi sorgulaniyor.
+
+Sayfada okunan ana izler sunlar:
+
+- `f_c` ile iliskili bir zaman olcegi kullaniliyor
+- `I_{step}` ve `D_{max}` benzeri buyuklukler denkleme giriyor
+- mevcut `C_E,total` benzeri MLCC katkisi denklemden dusulmeye calisiliyor
+- ilk ara sonuc olarak yaklasik `C_B \gtrsim 5.27 uF`
+- daha sonra marj eklenerek `C_{bulk} \gtrsim 18.32 uF` gibi daha buyuk bir hedef yaziliyor
+
+Tutarlilik kontrolu:
+
+- bu sayfa, bulk kapasitörun sadece ripple akimi tasima degil, gecici durumda enerji rezervi saglama rolunu de dikkate aliyor
+- `W.38` ile birlikte okundugunda, bulk secimi icin iki farkli kriterin birlikte dusunuldugu anlasiliyor:
+  - ripple akimi / ESR / isinma
+  - minimum enerji tamponu / kapasite
+- ancak sayfadaki son cebirin bir kismi silik ve bazi ara parametrelerin kaynagi onceki sayfalardan geliyor
+- bu nedenle burada korunacak ana bilgi, "bulk capacitor secimi tek boyutlu degil" fikri ve gorulen ara sonuc araligidir
+- sonraki sayfalarda ayni denklemin daha temiz hali gelirse bu blok yeniden netlestirilecektir
+
+
+
 #### 5.5.8 Acik teknik dogrulamalar
 
 
