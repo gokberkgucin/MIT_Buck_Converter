@@ -904,6 +904,230 @@ Ikinci yol ise $f_{sw}$ civarindaki cikis empedansini dusurmektir. Bunun pratik 
 
 Bu nedenle bu alt bolumde korunacak ana fikir sunudur: $V_{ripple}$ yalnizca bobin akim dalgalanmasi problemi degil, ayni zamanda $f_{sw}$ civarindaki $Z_{out}$'un sekillendirilmesi problemidir.
 
+Defterden aktarilan not (`W.68`):
+
+Bu sayfa, cikis sığaçlariyla ilgili dusunceyi iki ayri performans metriğine ayiriyor ve bunlari `Zout` ile bagliyor:
+
+1. load-step / transient sirasindaki `undershoot-overshoot`
+2. surekli anahtarlama sirasindaki `Vripple`
+
+Sayfada ilk olarak su iliski not edilmis:
+
+```math
+V_{out,\text{undershoot}}
+\approx
+\Delta I_{out}\,\lvert Z_{out}(f_c)\rvert
+```
+
+ve bunun "dusurmek gerekir" notu eklenmis. Yani yuk akimi bir anda degistiginde gorulen gerilim sapmasi, crossover civarindaki cikis empedansiyla iliskilendiriliyor.
+
+Sayfada daha sonra ripple icin su iliski tekrar yaziliyor:
+
+```math
+V_{ripple}
+\approx
+I_{L(p-p)} \, \lvert Z_{out}(f_{sw})\rvert
+```
+
+Bu bolumdeki ana dusunce izi sunlar:
+
+- `V_{ripple}`'i azaltmak icin ya bobin akimi dalgalanmasi `\Delta I_L` dusurulur
+- ya da `f_{sw}` civarindaki `Zout` daha dusuk hale getirilir
+- bunu saglamak icin:
+  - daha dusuk `ESR`
+  - daha yuksek etkin `C`
+  - uygun frekans davranisina sahip bir kapasitör agi
+  kullanilabilir
+
+Sayfanin ust tarafinda ayrica su notlar korunmaya deger:
+
+- cikis sığaci ani yuk degisimlerinde enerji tamponu gibi davranir
+- dusuk cikis empedansi, yuk degisimlerine hizli ve kararlı gerilim cevabi icin gereklidir
+- spike'lar icin ise ek kucuk MLCC / dusuk `ESL` dusuncesi not edilmis
+
+Tutarlilik kontrolu:
+
+- `W.68`, `5.4.3` ve `5.4.4` alt bolumlerinde yazili olan iki farkli `Zout` bakisini defter dilinle ayni sayfada birlestiriyor
+- yeni ve nihai sayisal sonuc vermiyor; daha cok performans hedeflerini `Zout(fc)` ve `Zout(fsw)` uzerinden zihinde ayiran bir tasarim notu
+- bu nedenle bu sayfa, cikis sığaçlari seciminde transient ve ripple kriterlerinin neden ayri ama bagli dusunulmesi gerektigini gosteren guclu bir kavramsal sayfa olarak korunmali
+
+Defterden aktarilan not (`W.69`):
+
+Bu sayfa, Bode grafiklerine bakilmadiginda kapasitans degisiminin etkisinin tam anlasilmadigini not ediyor ve bunu tek basina kapasitör empedansi uzerinden aciklamaya calisiyor.
+
+Sayfada yazilan temel iliski:
+
+```math
+Z_C(f) = \frac{1}{2\pi f C}
+```
+
+Bu iliskiye bagli olarak sayfada su sezgiler yazilmis:
+
+- dusuk frekansta buyuk `Z_C`
+- yuksek frekansta dusuk `Z_C`
+
+ve buna bagli yorumlar:
+
+- dusuk frekansta enerji depolama rolu daha on plandadir
+- yuksek frekansta ise kapasitör, gerilim baskilama / destekleme rolunde daha etkindir
+
+Sayfanin ana amaci, kapasitans degeri degistiginde bunun frekans cevabina neden dogrudan yansidigini sezgisel olarak gostermek gibi gorunuyor.
+
+Tutarlilik kontrolu:
+
+- `W.69`, `W.68`in dogal kavramsal devamidir; `Zout(fc)` ve `Zout(fsw)` dusuncesinin arkasinda yatan en temel `Z_C(f)` sezgisini yeniden yaziyor
+- yeni bir sayisal sonuc vermiyor
+- buna ragmen bu sayfa, "neden Bode / frekans bakisi olmadan ayni kapasitans degisiminin tum etkisini goremiyoruz?" sorusuna iyi bir defter notu oldugu icin korunmali
+
+Defterden aktarilan not (`W.70`):
+
+Bu sayfa, kapasitörun frekansa bagli empedansini ve klasik ripple-tabanli `C` hesabinin nereden geldigini ayni yerde birlestiriyor.
+
+Sayfada once temel kapasitör empedansi tekrar yaziliyor:
+
+```math
+Z_C(f) = \frac{1}{2\pi f C}
+```
+
+Ardindan su kavramsal not eklenmis:
+
+- dusuk frekansta kapasitörun `ESR/ESL` etkileri genellikle daha az baskindir
+- frekans arttikca ideal kapasitif davranisin yanina `ESR` ve sonra `ESL` etkileri daha gorunur hale gelir
+- dolayisiyla tek bir `C` degeriyle tum frekans davranisini anlatmak yeterli degildir
+
+Sayfadaki cizim de bunu destekliyor:
+
+- bir bolgede ideal kapasitif egim
+- sonra `ESR` nedeniyle daha yatay davranis
+- daha da yuksek frekansta parasitiklerin devreye girmesi
+
+Sayfanin altinda klasik ripple baglantisi da not edilmis:
+
+```math
+\Delta Q = C\,\Delta V
+```
+
+ve buradan, bobin akim dalgalanmasi ile iliskili klasik yaklasima gecis yapiliyor:
+
+```math
+\Delta V
+\approx
+\frac{\Delta I_L \, T_{switch}}{8\,C}
+\qquad \Longrightarrow \qquad
+C \approx \frac{\Delta I_L \, T_{switch}}{8\,\Delta V}
+```
+
+Yani bu sayfa, cikis ripple denklemindeki `8 f C` yapisinin nereden geldigini hatirlatan bir not gibi okunabilir.
+
+Tutarlilik kontrolu:
+
+- `W.70`, `W.68-W.69` hattinin dogal devamidir; `Zout` ve frekans bakisina klasik `\Delta Q = C\Delta V` ripple sezgisini ekliyor
+- yeni bir nihai sayisal sonuc vermiyor
+- buna ragmen bu sayfa, cikis sığaci seciminde hem frekans-temelli empedans dusuncesinin hem de zaman-duzlemindeki ripple yaklasiminin birlikte nasil tutuldugunu gosterdigi icin korunmali
+
+Defterden aktarilan not (`W.71`):
+
+Bu sayfa, `W.68-W.70` hattindaki dusunceyi cok kisa bir ozet halinde tekrar ediyor.
+
+Sayfada korunacak ana fikir su:
+
+- `f_c` civarinda cikis empedansi, `undershoot/overshoot` davranisi icin belirleyicidir
+- `f_{sw}` civarinda ise cikis empedansi, `V_{ripple}` davranisi icin belirleyicidir
+
+Sayfadaki iliskiler su sekilde yeniden not edilmis:
+
+```math
+V_{out,\text{undershoot}}
+\approx
+\Delta I_{out} \times Z_{out}(f_c)
+```
+
+```math
+V_{ripple}
+\approx
+I_{L(p-p)} \times Z_{out}(f_{sw})
+```
+
+Sayfanin altindaki not, bu iliskilerin Bode / empedans egileri uzerinden dusunulmesi gerektigini yeniden vurguluyor.
+
+Tutarlilik kontrolu:
+
+- `W.71`, yeni sayisal sonuc vermiyor; daha cok `W.68-W.70`teki ana ayrimi kisaltilmis bir ozet halinde tekrar ediyor
+- bu nedenle bu sayfa, defterde transient ve ripple problemlerini frekans ekseninde ayri takip ettigini gosteren kisa ama degerli bir isaret sayfasidir
+
+Defterden aktarilan not (`W.72`):
+
+Bu sayfa, tek bir kapasitörü ideal bir `C` elemani gibi degil, gercek esdeger modeli ile dusunmeye basladigini gosteriyor.
+
+Sayfada cizilen model su sekilde okunuyor:
+
+- ideal kapasitans `C`
+- buna paralel buyuk bir sizinti direnci (`R_{leak}` benzeri)
+- bunlarin uzerine seri bagli `ESL`
+- ve seri bagli `ESR`
+
+Sayfadaki toplam empedans notu su sekilde yazilmis:
+
+```math
+Z = \left(Z_C \parallel Z_{Rleak}\right) + Z_{ESL} + Z_{ESR}
+```
+
+hemen altinda da ilk yaklasim olarak:
+
+```math
+Z \approx Z_C + Z_{ESL} + Z_{ESR}
+```
+
+notu dusulmus. Sayfa kenarindaki aciklamadan, `R_{leak}`'in genelde cok buyuk oldugu ve bu nedenle ilk yaklasimda ihmal edilebildigi dusuncesi anlasiliyor.
+
+Bu sayfanin ana degeri su:
+
+- kapasitörun empedansi frekansa gore yalnizca `1/(sC)` gibi davranmaz
+- `ESR` ve `ESL` de modele girince, cikis sığaci secimi frekans cevabini ve spike davranisini dogrudan etkiler
+- dolayisiyla `Zout` dusuncesi kurulurken gercek komponent modeli gereklidir
+
+Tutarlilik kontrolu:
+
+- `W.72`, `W.57`, `W.69` ve `W.70` ile ayni hatta duruyor; fakat bu kez frekansa bagli davranisi daha dogrudan esdeger devre modeli uzerinden yaziyor
+- yeni bir nihai sayisal sonuc vermiyor
+- buna ragmen bu sayfa, cikis sığaci / MLCC davranisinin neden sadece ideal `C` ile aciklanamayacagini gosterdigi icin korunmali
+
+Defterden aktarilan not (`W.73`):
+
+Bu sayfa, artik output filter / control-to-output ve Type-III kompanzator topolojisini ayni cizim uzerinde dusunmeye basladigini gosteriyor.
+
+Sayfanin ust tarafinda `control-to-output` notu ve buna ait kavramsal bir Bode sekli var:
+
+- `\omega_0` civarinda LC cift kutbu
+- `\omega_z` civarinda `ESR` sifiri
+- bunlara gore kompanzator kutup ve sifirlarinin yerlestirilmesi gerektigi seziliyor
+
+Sayfanin orta kismina cizilen op-amp topolojisi ise Type-III kompanzatorun fiziksel `R-C` agini gosteren bir ara devre cizimi gibi okunuyor.
+
+Bu cizimde iki empedans blogu etiketlenmis:
+
+```math
+H(s) = \frac{V_c}{V_o} = -\frac{Z_F}{Z_1}
+```
+
+ve altta bunlarin acilimi not edilmis:
+
+```math
+Z_1 = R_1 \parallel \left(R_3 + \frac{1}{sC_2}\right)
+```
+
+```math
+Z_F = \frac{1}{sC_3} \parallel \left(R_2 + \frac{1}{sC_1}\right)
+```
+
+Sayfanin alttaki ifadesi de, kompanzator transfer fonksiyonunu bu iki empedansin orani olarak kurma denemesidir.
+
+Tutarlilik kontrolu:
+
+- `W.73`, cikis sığaci / plant modelinden kompanzator topolojisine gecis yapan cok onemli bir kopru sayfa
+- bu sayfa yeni nihai komponent degerlerini tek basina vermiyor; daha cok "planti gordukten sonra Type-III agi nasil kurulur?" sorusunun ilk defter cevabi gibi
+- bu nedenle bu sayfa, ileride `6.2.5 Compensator topolojisi ve temel model` bolumune geri baglanacak guclu bir ara sayfa olarak korunmali
+
 Defterden aktarilan not (`W.42`):
 
 Bu sayfa, bobin ve kapasitörun gorevini daha temel bir dille ozetliyor:
@@ -2485,6 +2709,45 @@ Tutarlilik kontrolu:
 - `W.45`, `W.41` ve `W.43` ile ayni kavramsal hatta duruyor
 - yeni bir son denklem vermiyor; ama neden bulk / giris kapasitörunun gerekli oldugunu cizim ve kisa notlarla temellendiriyor
 - bu nedenle belge acisindan, tasarim dusunce akisini gosteren degerli bir ara sayfa olarak korunmali
+
+Defterden aktarilan not (`W.67`):
+
+Bu sayfa, ani yuk degisiminde giris tarafinda gorulebilecek iki farkli gerilim spike mekanizmasini daha acik bir dille ayiriyor.
+
+Sayfada acikca su ayrim yapilmis:
+
+1. `ESR_B` ile iliskili spike
+2. `I_{IN-D}` ile `I_{PS}` arasindaki farktan kaynaklanan spike
+
+Ilk spike icin sayfadaki ana fikir su:
+
+- bulk kapasitörun `ESR`'i varsa
+- yuk aniden akim cektiginde bu akim cap'in `ESR`'inden gecerken anlik bir gerilim dususu olusur
+- bu ilk ve cok hizli olan spike'tir
+
+Bu, onceki sayfalardaki su iliskiyle uyumludur:
+
+```math
+V_{\text{spike,1}} \approx I_{step}\,ESR_B
+```
+
+Ikinci spike icin ise sayfada su dusunce izi var:
+
+- `I_{IN-D}` ile `I_{PS}` arasinda bir fark olusabilir
+- bu fark, high-side MOSFET'in drain ucuna gelen akim olarak dusunulmustur
+- buck icin anlik olarak
+  ```math
+  I_{IN-D} \approx I_{PS} + I_{Cin,bulk}
+  ```
+  gibi bir akim bolusumu not edilmistir
+- `I_{PS}` akimi daha yavas yukselebilir; bu nedenle ani durumda ikinci bir gerilim sapmasi olusabilir
+
+Tutarlilik kontrolu:
+
+- `W.67`, `W.41`te sozlu olarak anlatilan "iki farkli spike mekanizmasi" fikrini daha net bir dille tekrar ediyor
+- ilk spike acikca `ESR_B` kaynakli ani dusus olarak tanimlanmis
+- ikinci spike ise bu kez kaynak akimi ile donusturucunun anlik talebi arasindaki fark uzerinden aciklanmis
+- bu nedenle bu sayfa, bulk secimi ve input transient davranisi arasindaki fiziksel ayrimi guclendiren degerli bir aciklama sayfasidir
 
 
 
