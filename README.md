@@ -2,21 +2,42 @@
 
 
 
-Bu dosya tez formati icin degil, GitHub uzerinden surdurulen yasayan tasarim dokumani icin tutulur.
+Bu belge, ikinci buck converter tasariminin GitHub uzerinden surdurulen ana muhendislik dokumanidir.
 
+Bu dosya iki seyi ayni anda tasir:
 
+- nihai tasarima giden teknik omurgayi
+- o omurgaya nasil ulasildigini gosteren secilmis tasarim izlerini
+
+Buradaki hesaplarin omurgasi, dogrudan kullanicinin kendi defterinden gelen notlar ve hesap sayfalaridir. Bu nedenle belgede birlikte bulunabilen seyler sunlardir:
+
+- nihaiye yakin hesap
+- alternatif yontem
+- capraz teyit
+- eski iterasyon
+- hata zinciri nedeniyle sonradan zayiflayan hesap
+
+Bu, belgeyi zayiflatan bir sey olarak degil; tasarim surecinin gercek izini koruyan bir ozellik olarak okunmalidir.
+
+Bu nedenle belge:
+
+- yalnizca "temiz final sonuc" metni gibi okunmamalidir
+- ama ham defter yigini gibi de okunmamalidir
+
+En dogru okuma bicimi sudur:
+
+- `2. Durum Ozeti` ve `3. Tasarim Hedefleri` bolumleri repo'nun mevcut seviyesini ve hedefini verir
+- `4. Kullanilan Ana Kaynaklar` tasarim kararlarinin dayandigi ana belge ailesini gosterir
+- `5` ve `6` numarali bolumler guc katini ve kontrol tasarimini tasir
+- `7` numarali bolum EMI, giris filtresi ve yerlesim tarafini toplar
 
 Ana yol haritasi: `tracking/master_plan.md`
 
+Temel belge kurallari:
 
-
-Kurallar:
-
-- Yalnizca secilen ve gercekten kullanilan kaynaklari buraya tasiyin.
-
-- Ham notlari buraya oldugu gibi yigmayin; dogrulanmis ve okunabilir hale getirin.
-
-- Kullanilacak gorselleri mumkunse `images/` klasorune kopyalayip temiz isimlerle cagirin.
+- yalnizca secilen ve gercekten kullanilan kaynaklari govdeye tasiyin
+- ham notlari oldugu gibi yigmak yerine izlerini koruyarak okunur hale getirin
+- belgede gorunecek gorselleri mumkunse `images/` altinda temiz isimlerle kullanin
 
 
 
@@ -1056,13 +1077,11 @@ Bu nedenle acik kontrol maddesi olarak su soru korunacaktir:
 
 ODT'den aktarilan metin (`5. çıkış bobini`):
 
-> BOŞ EKLENECEK
-
-
+Bu alt baslikta ODT'den gelen eski metin su asamada govdeye oldugu gibi tasinmamistir. Bobin secimi bu iterasyonda agirlikli olarak defter sayfalari, secilen gercek parca ve sonraki notlar uzerinden yeniden kurulmustur.
 
 Ek not:
 
-Bu alt bolum su anda placeholder olarak tutuluyor. Sonraki parcada bobin degeri, ripple gerekcesi, slew-rate iliskisi ve gerekiyorsa denklemler GitHub uyumlu matematik biciminde eklenebilir.
+Bu nedenle bobin bolumu bos gecilmek yerine, asagidaki `W.54-W.56` hattindan itibaren tekrar insa edilmektedir.
 
 Defterden aktarilan not (`W.54`):
 
@@ -7252,7 +7271,7 @@ Tutarlilik kontrolu:
 
 Defterden aktarilan not (`W.200`):
 
-Bu sayfa, `other losses` zincirinde MOSFET'e bagli kalemlerden sonra bu kez kontrolcü / yardimci devre tuketimi ve diger kalan kayip kalemlerine not dusen bir toplama / TODO sayfasi gibi duruyor. Bu nedenle yeni nihai verim sonucu degil; `5.6.3 Ilk kayip notlari` altinda, kontrolcu guc tuketimi ve sonraya birakilan kayip kalemlerini gosteren ara not sayfasi olarak korunmalidir.
+Bu sayfa, `other losses` zincirinde MOSFET'e bagli kalemlerden sonra bu kez kontrolcü / yardimci devre tuketimi ve diger kalan kayip kalemlerine not dusen bir toplama sayfasi gibi duruyor. Bu nedenle yeni nihai verim sonucu degil; `5.6.3 Ilk kayip notlari` altinda, kontrolcu guc tuketimi ve sonraya birakilan kayip kalemlerini gosteren ara not sayfasi olarak korunmalidir.
 
 Sayfanin ustunde once LM5146'nin kendi calisma akimindan dogan kayip hesaplanmis. Okunabildigi kadariyla iliski su:
 
@@ -7305,7 +7324,7 @@ Tutarlilik kontrolu:
 - bu sayfa yeni bir toplam verim sonucu vermiyor
 - ama `P_{IC} \approx 64.8\,mW` gibi kontrolcunun kendi tuketimini kayip butcesine dahil ettigini gosterdigi icin onemli
 - daha da onemlisi, `R_{sense}`, bobin ve kapasitör/ESR kayiplarinin o asamada henuz "sonra yapilacaklar" listesinde oldugunu acikca gostermesi
-- bu nedenle `W.200`, `5.6.3 Ilk kayip notlari` altinda kontrolcu tuketimi ve kalan kayip kalemlerini not eden ara toplama / TODO sayfasi olarak korunmalidir
+- bu nedenle `W.200`, `5.6.3 Ilk kayip notlari` altinda kontrolcu tuketimi ve kalan kayip kalemlerini not eden ara toplama sayfasi olarak korunmalidir
 
 Defterden aktarilan not (`W.124`):
 
@@ -8118,9 +8137,7 @@ Bu bolum tamamlanirken su maddeler netlestirilecek:
 
 #### 5.7.1 ODT'den aktarilan metin (`8. mosfetler`)
 
-
-
-> Eklenecek..
+Bu alt baslikta ODT'deki eski metin tam govde olarak yeniden kullanilmamistir. Bootstrap ve gate-drive tarafinda, daha sonra defterden gelen sayfalar ve kaynak belgelerle daha guclu ve daha izlenebilir bir akis olustugu icin ana anlatim `5.7.2` altindan devam ettirilmistir.
 
 
 
@@ -9941,11 +9958,13 @@ Tutarlilik kontrolu:
 
 
 
-#### 6.3.3 Sonradan eklenecekler
+#### 6.3.3 Sonraki sikilastirma hedefleri
 
 
 
-Bu bolume daha sonra su maddeler eklenecek:
+Bu alt baslik, acik bir bosluk degil; frekans yerlestirmesi tarafinda daha sonra daha siki baglanmasi gereken maddeleri toplamak icin tutulur.
+
+Bu tarafta sonraki netlestirme hedefleri sunlardir:
 
 - gercek hedef `fc` secimi
 
