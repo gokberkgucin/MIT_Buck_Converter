@@ -208,6 +208,50 @@ Su an icin cekirdek adaylar:
 
 - [G113_An Engineer’s Guide to Low EMI in DC_DC Regulators_slyy208.pdf](./references/pdfs/G113_An%20Engineer%E2%80%99s%20Guide%20to%20Low%20EMI%20in%20DC_DC%20Regulators_slyy208.pdf)
 
+- [LM5146_quickstart_calculator_revB1.xlsm](./references/pdfs/LM5146_quickstart_calculator_revB1.xlsm)
+
+
+
+### 4.1 `LM5146` quickstart calculator ile capraz teyit
+
+
+
+Ek not (calculator teyidi):
+
+Bu Excel dosyasi, defterde yapilan hesaplarin yerine gecen tek kaynak gibi degil; daha cok nihai tasarim omurgasini capraz teyit etmek icin kullanilan bir arac gibi okunmali.
+
+Workbook'ta guclu bicimde tekrar eden ana tasarim omurgasi sunlardir:
+
+- `V_{IN} = 24 / 30 / 36 V`
+- `V_{OUT} = 14 V`
+- `I_{OUT,max} = 9 A`
+- `f_{sw} = 332 kHz`
+- `R_{RT} = 30.1 kOhm`
+- secilen bobin: `6.8 uH`
+- bobin `DCR`: `0.88 mOhm`
+- `C_{SS} = 47 nF`
+- `t_{SS} = 4 ms`
+
+Kompanzator tarafinda da workbook ile defterin nihaiye yakin gorunen cizgisi ayni aileye oturuyor:
+
+- `RFB1 = 26.4 kOhm`
+- `RFB2 = 1.58 kOhm`
+- `RC1 = 6.65 kOhm`
+- `RC2 = 768 Ohm`
+- `CC1 = 4.7 nF`
+- `CC2 = 120 pF`
+- `CC3 = 1.0 nF`
+- `f_c = 35 kHz`
+- `f_{p2} = 166 kHz`
+
+Bu nedenle, workbook ile bu Markdown belge arasindaki iliski su sekilde okunmali:
+
+- workbook, tasarimin cekirdek nihai omurgasini guclu bicimde teyit ediyor
+- defter ve `yeni.md` ise bunun uzerine eski iterasyonlari, alternatif yontemleri, komponent secim mantigini ve sonraki rafineleri de tasiyor
+- ozellikle giris kapasitörü, UVLO ve bazi kayip parametrelerinde workbook daha erken / daha sade bir checkpoint olabilir; defterin sonraki sayfalarinda ise gercek komponent, `dc-bias`, `ESR` ve alternatif senaryolarla daha ileri rafine edilmis notlar bulunur
+
+Bu yuzden workbook ile `yeni.md` iliskisi "birebir ayni tek iterasyon" gibi degil, "ayni tasarimin nihai omurgasi + defterde korunmus tasarim izi" seklinde dusunulmelidir
+
 
 
 ## 5. Guc Katinin Tasarimi
@@ -480,6 +524,16 @@ Tutarlilik kontrolu:
 - bu nedenle eski secim silinmemeli, "ilk aday / eski iterasyon" olarak korunmali
 - bundan sonra setpoint hesabinda varsayilan guncel aday `26.4 kOhm / 1.6 kOhm` olacak
 
+Ek not (calculator teyidi):
+
+`LM5146_quickstart_calculator_revB1.xlsm` dosyasinda da geri besleme bolucusu ayni nihai aileye oturuyor:
+
+- `RFB1 = 26.4 kOhm`
+- `RFB2 = 1.58 kOhm`
+- `Actual Vout = 14.167 V`
+
+Bu nedenle calculator, `16.5 kOhm / 1.00 kOhm` eski adayini degil; `W.14-W.16` ve satin alinmis BOM ile uyumlu gorunen `26.4 kOhm / 1.6 kOhm` cizgisini daha guclu bicimde destekliyor
+
 Defterden aktarilan not (`W.202`):
 
 Bu sayfa, LM5146 datasheet'indeki `Output Voltage Setpoint and Accuracy FB` basligina bakilarak tutulmus bir setpoint notu gibi duruyor. Sayfada geri besleme bolucusu ve `FB` dugumunun referansla iliskisi cizilmis.
@@ -633,6 +687,15 @@ Tutarlilik kontrolu:
 - `C26 = 47 nF` seciminin neden oldugunu gosterdigi icin degerli
 - bu nedenle `W.206`, `5.1.4` altinda `SS/TRK` soft-start kapasitörü ve rampa suresini hesaplayan uygulama sayfasi olarak korunmali
 
+Ek not (calculator teyidi):
+
+`LM5146_quickstart_calculator_revB1.xlsm` dosyasinda da startup tarafi su sekilde gorunuyor:
+
+- `C_{SS} = 47 nF`
+- `t_{SS} = 4 ms`
+
+Bu, defterdeki `47 nF -> 3.76 ms` hesabinin ayni tasarim cizgisinde oldugunu gosteriyor. Yani burada ciddi bir celiski degil, yuvarlama / hedef sure farki var
+
 Defterden aktarilan not (`W.207`):
 
 Bu sayfa, datasheet'in `8.3.2 Precision Enable` tarafina ait bir `EN/UVLO` notu gibi duruyor. Sayfanin ustunde, `VIN` ile `EN/UVLO` pini arasinda bir direnç bolucusu cizilmis:
@@ -729,6 +792,17 @@ Tutarlilik kontrolu:
 - sayfanin ustundeki `Vin(on) / Vin(off)` el yazisi ile alttaki sayisal yerlestirme arasinda kucuk bir tutarsizlik olabilir; ustteki hedefler tam net okunmasa da alttaki denklem acikca `24V` ve `23V` ile kurulmus
 - bu nedenle bu sayfa "nihai dogrulanmis direnç secimi" gibi degil, `EN/UVLO` bolucusunu boyutlandirma mantigini gosteren uygulama sayfasi olarak korunmali
 - daha sonra son temizlik turunda, `Vin(on)` ve `Vin(off)` hedefleri tekrar teyit edilerek bu bolum netlestirilebilir
+
+Ek not (calculator teyidi):
+
+`LM5146_quickstart_calculator_revB1.xlsm` dosyasinda `EN/UVLO` tarafi icin su secim gorunuyor:
+
+- `V_{IN,on} = 30 V`
+- `V_{IN,off} = 28 V`
+- `R_{UV1} = 200 kOhm`
+- `R_{UV2} = 8.25 kOhm`
+
+Bu nedenle `W.209` icindeki `24 V / 23 V` yerlestirmesi, su asamada nihai UVLO secimi gibi degil; daha cok ayni denklemi anlamaya yonelik bir ornek / ara uygulama gibi okunmali
 
 
 #### 5.1.5 `RT` pini ve anahtarlama frekansi
@@ -1173,6 +1247,17 @@ Tutarlilik kontrolu:
 - `I_{sat} \approx 36.3 A` notu, `I_{L,peak} \approx 10.9 A` sonucuna gore cok rahat bir doyma marji oldugunu gosteriyor
 - `DCR \approx 0.88 mOhm` notu da, onceki sayfadaki `DCR` dusuk olmali fikrinin secilen parcada somutlastigini gosteriyor
 - bu nedenle bu sayfa, bobin seciminin artik kuvvetli bicimde `nihai tasarimda kullanilan parca` seviyesine yaklastigini gosteren cok degerli bir sayfadir
+
+Ek not (calculator teyidi):
+
+`LM5146_quickstart_calculator_revB1.xlsm` dosyasinda da bobin tarafi su sekilde gorunuyor:
+
+- onerilen `L_O \approx 7.504 uH`
+- secilen `L_O = 6.8 uH`
+- `DCR = 0.88 mOhm`
+- nominal girdide ripple akimi `\approx 3.373 A_{p-p}`
+
+Bu nedenle calculator da, defterde nihaiye yakin gorunen `6.8 uH / 0.88 mOhm` secimini guclu bicimde destekliyor. Workbook'taki `7.504 uH` degeri ise secilen standard deger olan `6.8 uH` oncesindeki teorik oneriyi temsil ediyor
 
 
 
@@ -1842,6 +1927,17 @@ Tutarlilik kontrolu:
 - sayfa yeni nihai `Cout` sonucu vermiyor
 - ama `\Delta I_L = 3.8 A` ve `2.7 A` senaryolarinin cikis ripple hesabina nasil girdigini gosterdigi icin, bobin secimi ile cikis ripple'i arasindaki bagi bir kez daha pekistiriyor
 - bu nedenle bu sayfa, `W.58` hattinda kapasitif ripple bilesenini ayri gosteren kisa bir destek sayfasi olarak korunmali
+
+Ek not (calculator teyidi):
+
+`LM5146_quickstart_calculator_revB1.xlsm` dosyasinda cikis sığaçlari icin su checkpoint gorunuyor:
+
+- minimum ideal `C_{OUT} \approx 12.699 uF`
+- toplam derated `C_{OUT} \approx 70 uF`
+- toplam `ESR \approx 0.28 mOhm`
+- hesaplanan ripple `\approx 18.17 mV_{p-p}`
+
+Bu, defterde sik tekrar eden `70 uF` cikis banki cizgisiyle uyumludur. Defterdeki `14 uF` civari alt sinir hesaplari ise, secilen `70 uF` bankin neden rahat marjli gorundugunu aciklayan asama notlari olarak okunmalidir
 
 Defterden aktarilan not (`W.59`):
 
@@ -2936,6 +3032,18 @@ Tutarlilik kontrolu:
 - `W.32` mevcut projedeki `0.24 V` hedefine gore daha sert bir ornek oldugu icin nihai sonuc gibi yazilmamali
 - `W.33` sayfasindaki `50 mA` current ripple yorumu, dogrudan capacitor seciminden cok kaynak tarafinin gordugu kalite metriği olarak ele alinmali
 - bu nedenle bu batch tek bir sonuc vermiyor; aksine ayni input-capacitor problemini farkli seviyelerde cozen bir hesap ailesi veriyor
+
+Ek not (calculator teyidi):
+
+`LM5146_quickstart_calculator_revB1.xlsm` dosyasinda giris kapasitörü tarafi icin daha erken / daha sade bir checkpoint gorunuyor:
+
+- minimum ideal `C_{IN} \approx 28.172 uF`
+- toplam derated `C_{IN} \approx 30 uF`
+- `ESR \approx 1 mOhm`
+- hesaplanan giris ripple'i `\approx 236.07 mV_{p-p}`
+- `I_{Cin,RMS} \approx 4.495 A`
+
+Bu, defterdeki ilk `28.4 uF` cizgisiyle cok uyumludur. Ancak sonraki defter sayfalarinda MLCC `dc-bias` dususu ve ek bulk secimi daha ayrintili dusunuldugu icin, `8.228 uF + 34 uF` ve `0.2006 V` gibi daha rafine sonuc cizgileri workbook'un bu erken checkpoint'inin uzerine cikmaktadir. Bu durum celiski gibi degil, gercek komponentlerle yapilan sonraki iyilestirme gibi okunmalidir
 
 Defterden aktarilan not (`W.51`):
 
@@ -9084,12 +9192,44 @@ Bu bolum, ileride MATLAB ve LTspice ile yapilacak loop dogrulamasinin teorik bas
 
 Defterden aktarilan not:
 
-- `W.1-W.6`: `G99` ve benzeri Type-III kaynaklardan, crossover frekansinda gereken kazanc ve faz katkisi turetiliyor. Bu sayfalar daha cok yontemin ogrenilmesi ve isaret-konvansiyonu oturtulmasi icin kullanilmis gorunuyor.
+- `W.1-W.6`: [EX7.1 Buck Converter Closed-Loop Design (Type 3 Compensator).pdf](./references/pdfs/EX7.1%20Buck%20Converter%20Closed-Loop%20Design%20(Type%203%20Compensator).pdf), [G2_Buck Converter Design Part 2 - Closed-Loop LM5146 - Video Version.pdf](./references/pdfs/G2_Buck%20Converter%20Design%20Part%202%20-%20Closed-Loop%20LM5146%20-%20Video%20Version.pdf) ve [G32_lm5146-q1.pdf](./references/pdfs/G32_lm5146-q1.pdf) uzerinden, crossover frekansinda gereken kazanc ve faz katkisi turetiliyor. Bu sayfalar daha cok yontemin ogrenilmesi ve isaret-konvansiyonu oturtulmasi icin kullanilmis gorunuyor.
 - `W.7-W.10`: op-amp acik-cevrim modeli, `GBW / A_{dc}` iliskisi, `KFF = 15 V/V` notu ve `G98` Figure 2 / Figure 3 kullanim izleri var. Bu grup, modulator ve hata yukselteci modelini destekliyor.
 - `W.11-W.12`: faz marji ve plant fazinin sayisal olarak tekrar hesaplandigi ara sayfalar. `PM = 55 deg` hedefinin bu iterasyonda da korundugu goruluyor.
 - `W.13-W.16`: Type-III kompanzator eleman degerleri icin sayisal hesaplar yapiliyor. Bu aralikta en az iki farkli iterasyon var.
 - `W.17-W.19`: current-limit / `R_{ilim}` hesabi. EVM'deki `619 Ohm` referans degeri ile yerel hesap karsilastiriliyor.
 - `W.20-W.24`: Type-III kutup-sifir mantigi, `Kmid`, `f_c`, `f_o`, `f_{esr}` ve geri besleme bolucusunun kompanzatorla iliskisi uzerine kavramsal notlar var.
+
+Ek not (ikinci tur netlestirme - `W.1`):
+
+`W.1`, artik daha net bicimde su kaynak zincirine oturuyor:
+
+- `EX7.1` tarafinda `L(j\omega) = M(j\omega)\,F(j\omega)\,G_3(j\omega)` ve crossover'da unity-gain sarti
+- `G2` tarafinda ayni `modulator + filter/load + compensator` ayrimi
+- `G32` tarafinda ise LM5146 icin `V_{IN} / V_{RAMP} = 15` modulator kazanci
+
+Bu nedenle bu sayfa, "crossover frekansinda kompanzatorun gerekli kazancini bulma" adimi olarak okunmali.
+
+Sayfada guvenle okunan ana akis sunlardir:
+
+- `f_t = 35 kHz`
+- `M = V_s / V_{ramp} = 15`
+- `|L(j\omega_t)| = |M(j\omega_t)| \cdot |F(j\omega_t)| \cdot |G_3(j\omega_t)| = 1`
+- `|F(j\omega_t)| \approx 0.045356`
+- buradan:
+
+```math
+|G_3(j\omega_t)|
+=
+\frac{1}{|M(j\omega_t)|\,|F(j\omega_t)|}
+=
+\frac{1}{15 \times 0.045356}
+\approx
+1.46985
+\approx
+3.3454\,dB
+```
+
+Buradaki ara sayisal adimlarin bazilarinin son basamaklari foto uzerinden cok net okunmasa da, sayfanin yaptigi islem ve vardigi sonuc kaynak yontemle tutarlidir. Bu nedenle `W.1`, serbest bir karalama degil; `EX7.1 / G2` yonteminin kullanicinin kendi `35 kHz` tasarim hedefiyle uygulanmis ilk temiz kazanc sayfasi olarak korunmalidir.
 
 Tutarlilik kontrolu:
 
@@ -9118,6 +9258,22 @@ Bu grup, projedeki kontrolcu bolumunun artik yalnizca "Type-III kullanilacak" se
 - teyit / capraz kontrol amacli hesap
 
 Bu nedenle `W.1-W.24`, topluca tek bir "nihai sonuc" olarak degil, ayni kontrol problemi uzerinde olusan tasarim izi olarak okunmalidir.
+
+Ek not (calculator teyidi):
+
+`LM5146_quickstart_calculator_revB1.xlsm` dosyasinin `Design Regulator` sayfasi da ayni nihaiye yakin kompanzator ailesini veriyor:
+
+- `RFB1 = 26.4 kOhm`
+- `RFB2 = 1.58 kOhm`
+- `RC1 = 6.65 kOhm`
+- `RC2 = 768 Ohm`
+- `CC1 = 4.7 nF`
+- `CC2 = 120 pF`
+- `CC3 = 1.0 nF`
+- `f_c = 35 kHz`
+- `f_{p2} = 166 kHz`
+
+Bu nedenle workbook, `W.13` veya `W.115` gibi eski `16.5 kOhm / 60 kHz` cizgilerini degil; `W.14-W.16` ile belirginlesen ve satin alinmis BOM'a daha yakin duran nihai kompanzator cizgisini guclu bicimde destekliyor
 
 
 
