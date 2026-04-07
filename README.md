@@ -9218,15 +9218,21 @@ Sayfada guvenle okunan ana akis sunlardir:
 - buradan:
 
 ```math
-|G_3(j\omega_t)|
+\left|G_3(j\omega_t)\right|
 =
-\frac{1}{|M(j\omega_t)|\,|F(j\omega_t)|}
+\frac{1}{\left|M(j\omega_t)\right|\,\left|F(j\omega_t)\right|}
 =
-\frac{1}{15 \times 0.045356}
+\frac{1}{15 \cdot 0.045356}
 \approx
 1.46985
+```
+
+Bu buyuklugun `dB` cinsinden yazimi ise:
+
+```math
+20\log_{10}\!\left(\left|G_3(j\omega_t)\right|\right)
 \approx
-3.3454\,dB
+3.3454\,\mathrm{dB}
 ```
 
 Buradaki ara sayisal adimlarin bazilarinin son basamaklari foto uzerinden cok net okunmasa da, sayfanin yaptigi islem ve vardigi sonuc kaynak yontemle tutarlidir. Bu nedenle `W.1`, serbest bir karalama degil; `EX7.1 / G2` yonteminin kullanicinin kendi `35 kHz` tasarim hedefiyle uygulanmis ilk temiz kazanc sayfasi olarak korunmalidir.
