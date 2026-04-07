@@ -9260,12 +9260,12 @@ Bu buyuklugun `dB` cinsinden karsiligi:
 $$
 20\log_{10}\!\big(\lvert G_3(j\omega_t)\rvert\big)
 \approx
-3.35\,\text{dB}
+3.3454\,\text{dB}
 $$
 
 Kisa yorum:
 
-Bu sayfanin anlattigi sey su: `35 kHz` crossover noktasinda, modulator kazanci ve plant kazanci birlikte dusunuldugunde, kompanzatorun o frekansta yaklasik `1.47 V/V` ya da `3.35 dB` kazanc vermesi gerekiyor.
+Bu sayfanin anlattigi sey su: `35 kHz` crossover noktasinda, modulator kazanci ve plant kazanci birlikte dusunuldugunde, kompanzatorun o frekansta yaklasik `1.46985 V/V` ya da `3.3454 dB` kazanc vermesi gerekiyor.
 
 Buradaki ara sayisal adimlarin bazilarinin son basamaklari foto uzerinden cok net okunmasa da, sayfanin yaptigi islem ve vardigi sonuc kaynak yontemle tutarlidir. Bu nedenle `W.1`, serbest bir karalama degil; `EX7.1 / G2` yonteminin kullanicinin kendi `35 kHz` tasarim hedefiyle uygulanmis ilk temiz kazanc sayfasi olarak korunmalidir.
 
